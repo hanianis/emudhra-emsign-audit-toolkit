@@ -10,8 +10,6 @@ This repository provides Linux and Windows auditing scripts to inspect operating
 
 - [Overview](#overview)
 - [Confirmed Compromised Public Keys](#confirmed-compromised-public-keys)
-- [Repository Structure](#repository-structure)
-- [Prerequisites](#prerequisites)
 - [Linux Audit](#1-linux-audit)
 - [Windows Certificate Store Audit](#2-windows-certificate-store-audit)
 - [Windows Shadow Trust Audit](#3-windows-shadow-trust-audit)
@@ -84,30 +82,7 @@ EC4FFA1AD0AC88081314B7AAFFEF6A91F97CD57291BB5BA686C5415F5EB4F6B6
 
 The configuration above is an indicator reference. Each script must calculate the certificate's SPKI SHA-256 correctly before comparing it with this list.
 
-## Repository Structure
-
-```text
-.
-├── audit-emudhra-linux.sh
-├── Audit-WindowsCertStore.ps1
-├── Audit-WindowsShadowTrust.ps1
-├── README.md
-└── audit-reports-eMudhra/
-    └── generated reports
-```
-
-The report directory is generated during Linux audit execution. It is not necessary to commit generated reports to GitHub.
-
-Recommended `.gitignore` entries:
-
-```gitignore
-audit-reports-eMudhra/
-*.log
-*.csv
-*.json
-```
-
-Adjust these exclusions if your project intentionally version-controls sanitized test results.
+Adjust these exclusions if for intentionally  sanitized test results.
 
 ## Prerequisites
 
@@ -198,14 +173,13 @@ It uses configured Subject and Issuer patterns to identify certificates requirin
 
 ### Running locally
 
-1. Open PowerShell as **Administrator**.
-2. Configure the reporting flags at the beginning of the script:
-
-   ```powershell
+1. Configure the reporting flags at the beginning of the script:
+ ```powershell
    $EnableSCCM  = $false
    $VerboseMode = $true
    $SummaryMode = $true
    ```
+2. Open PowerShell as **Administrator**.
 
 3. Execute the script:
 
@@ -274,13 +248,13 @@ Add other directories or drive locations relevant to your environment.
 
 ### Running locally
 
-1. Open an elevated PowerShell terminal.
-2. Configure the reporting flags:
+1. Configure the reporting flags:
 
    ```powershell
    $EnableSCCM  = $false
    $SummaryMode = $true
    ```
+2. Open an elevated PowerShell terminal.
 
 3. Execute:
 
@@ -308,21 +282,29 @@ Add other directories or drive locations relevant to your environment.
 The following is an illustrative example of a certificate detection:
 
 ```json
+
 {
   "ComputerName": "WS-SEC-01",
-  "AuditType": "eMudhra/Sectigo Shadow Trust Audit",
+  "AuditType": "eMudhra/Sectigo Shadow Trust Audit (CVE-2026-111943)",
   "AuditStatus": "MATCH FOUND",
-  "FilesScanned": 1420,
-  "CertificatesChecked": 3120,
-  "MatchesFound": 1,
+  "SearchPathsPresent": 5,
+  "FilesScanned": 30,
+  "CertificatesChecked": 1702,
+  "MatchesFound": 19,
+  "ScanErrors": 4,
   "MatchingCerts": [
     {
+      "FindingType": "SHADOW_TRUST_ROOT_CA",
+      "Detail": "AAA Certificate Services (Sectigo Cross-Signing Root)",
       "FilePath": "C:\\tools\\python311\\Lib\\site-packages\\certifi\\cacert.pem",
       "Subject": "CN=emSign ECC Root CA - G3, O=eMudhra Technologies Limited, C=IN",
-      "SHA256Hash": "<verified SHA-256 value>"
-    }
-  ]
-}
+      "Issuer": "CN=AAA Certificate Services, O=Comodo CA Limited, L=Salford, S=Greater Manchester, C=GB",
+      "CertSHA256": "D7A7A0FB5D7E2731D771E9484EBCDEF71D5F0C3E0A2948782BC83EE0EA699EF4",
+      "SpkiSHA256": null,
+      "MatchedHash": "D7A7A0FB5D7E2731D771E9484EBCDEF71D5F0C3E0A2948782BC83EE0EA699EF4",
+      "NotAfter": "2029-01-01"
+    },
+
 ```
 
 This example illustrates the reporting structure. The values are not a verified live detection.
