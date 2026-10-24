@@ -7,7 +7,7 @@
 
 $VerboseMode = $false #debug
 $SummaryMode = $true
-$EnableSCCM   = $false 
+$EnableSCCM   = $true 
 
 $SuspectRegex = '(?i)emSign.*G3|EM (DV|OV|EV) TLS CA - G3.*|EM OV CS CA - G3.*'
 
